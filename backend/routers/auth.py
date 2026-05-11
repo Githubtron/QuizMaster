@@ -44,3 +44,22 @@ async def login(payload: UserLogin, db: AsyncSession = Depends(get_db)):
 
     token = create_access_token(user.id, {"role": user.role, "email": user.email})
     return TokenResponse(access_token=token, user=UserOut.model_validate(user))
+
+@router.get("/seed-demo")
+async def seed_demo_users(db: AsyncSession = Depends(get_db)):
+    users = [
+        {"email": "admin@demo.com", "password_hash": hash_password("admin1234"), "full_name": "Demo Admin", "role": "ADMIN"},
+        {"email": "professor@demo.com", "password_hash": hash_password("prof1234"), "full_name": "Demo Professor", "role": "PROFESSOR"},
+        {"email": "student@demo.com", "password_hash": hash_password("student1234"), "full_name": "Demo Student", "role": "STUDENT"},
+    ]
+    created = []
+    for u in users:
+        existing = await db.execute(select(User).where(User.email == u["email"]))
+        if not existing.scalar_one_or_none():
+            user = User(**u)
+            db.add(user)
+            created.append(u["email"])
+    if created:
+        await db.commit()
+        return {"detail": f"Seeded users: {', '.join(created)}"}
+    return {"detail": "Demo users already exist"}
