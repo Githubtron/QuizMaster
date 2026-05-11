@@ -57,8 +57,9 @@ services:
         sync: false
 
   # ── Frontend: React Static Site ─────────────────────────────
-  - type: static
+  - type: web
     name: quizmaster-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
@@ -68,11 +69,6 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
-
-    headers:
-      - path: /*
-        name: Cache-Control
-        value: no-cache
 
     envVars:
       # Set to the backend service URL after first deploy, e.g.:
