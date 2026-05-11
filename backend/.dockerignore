@@ -1,0 +1,18 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+# Secrets — set these as Render env vars, not files
+.env
+.env.*
+!.env.example
+# Dev/CI artefacts
+.pytest_cache/
+htmlcov/
+.coverage
+.git/
+.vscode/
+.idea/

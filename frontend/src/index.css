@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/* ── Class-based dark mode variant ────────────────────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  /* ── Light mode tokens ─────────────────────────────────────────────────── */
+  :root {
+    --qm-navy:       #0a1628;
+    --qm-blue:       #1d4ed8;
+    --qm-indigo:     #4338ca;
+    --qm-bg:         #eef2ff;
+    --qm-card:       #ffffff;
+    --qm-surface:    #f8fafc;
+    --qm-border:     #e0e7ff;
+    --qm-border-sub: #f1f5f9;
+    --qm-text:       #0f172a;
+    --qm-text-muted: #64748b;
+    --qm-text-faint: #94a3b8;
+    --qm-emerald:    #059669;
+    --qm-amber:      #d97706;
+    --qm-red:        #dc2626;
+    --font-display:  'Sora', system-ui, sans-serif;
+    --font-mono:     'Space Mono', monospace;
+  }
+
+  /* ── Dark mode tokens ──────────────────────────────────────────────────── */
+  .dark {
+    --qm-navy:       #080e1a;
+    --qm-blue:       #3b82f6;
+    --qm-indigo:     #6366f1;
+    --qm-bg:         #0d1117;
+    --qm-card:       #161c2d;
+    --qm-surface:    #111827;
+    --qm-border:     #2d3a52;
+    --qm-border-sub: #1e293b;
+    --qm-text:       #e2e8f0;
+    --qm-text-muted: #8896aa;
+    --qm-text-faint: #475569;
+    color-scheme: dark;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-display);
+    background-color: var(--qm-bg);
+    color: var(--qm-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  #root {
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono) !important;
+  }
+}
+
+/* ── Global dark-mode overrides ────────────────────────────────────────────
+   Covers all hardcoded Tailwind bg-white / text-slate-* usages
+   without requiring dark: variants on every JSX element.
+── */
+.dark .bg-white {
+  background-color: var(--qm-card) !important;
+}
+.dark [style*="background: white"],
+.dark [style*="background: 'white'"],
+.dark [style*="background:#ffffff"],
+.dark [style*="background: #ffffff"] {
+  background-color: var(--qm-card) !important;
+}
+
+/* Navbar backdrop */
+.dark .bg-white\/80 {
+  background-color: color-mix(in srgb, var(--qm-card) 90%, transparent) !important;
+}
+
+/* Table header */
+.dark .bg-slate-50,
+.dark [style*="background: '#f8fafc'"],
+.dark [style*="background: #f8fafc"] {
+  background-color: var(--qm-surface) !important;
+}
+.dark .hover\:bg-slate-50\/50:hover,
+.dark .hover\:bg-slate-50:hover {
+  background-color: color-mix(in srgb, var(--qm-surface) 60%, transparent) !important;
+}
+.dark .bg-slate-100 {
+  background-color: var(--qm-surface) !important;
+}
+
+/* Text */
+.dark .text-slate-900,
+.dark .text-slate-800 {
+  color: var(--qm-text) !important;
+}
+.dark .text-slate-700,
+.dark .text-slate-600 {
+  color: var(--qm-text-muted) !important;
+}
+.dark .text-slate-500,
+.dark .text-slate-400 {
+  color: var(--qm-text-faint) !important;
+}
+
+/* Borders */
+.dark .border-slate-200,
+.dark .border-slate-300 {
+  border-color: var(--qm-border) !important;
+}
+.dark .border-b.border-slate-200 {
+  border-color: var(--qm-border) !important;
+}
+
+/* Inline style borders used throughout dashboards */
+.dark [style*="border: '1px solid #e0e7ff'"],
+.dark [style*="border-bottom: '1px solid #e0e7ff'"],
+.dark [style*="border-bottom: '1px solid #f1f5f9'"] {
+  border-color: var(--qm-border) !important;
+}
+
+/* Form elements */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--qm-surface) !important;
+  color: var(--qm-text) !important;
+  border-color: var(--qm-border) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--qm-text-faint) !important;
+}
+
+/* Recharts */
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: var(--qm-border) !important;
+}
+.dark .recharts-tooltip-wrapper .bg-white {
+  background-color: var(--qm-card) !important;
+}
+
+/* Skeleton dark mode */
+.dark .bg-slate-200 {
+  background-color: var(--qm-border) !important;
+}
+
+/* Notification dropdown */
+.dark .hover\:bg-slate-50:hover {
+  background-color: color-mix(in srgb, var(--qm-surface) 80%, transparent) !important;
+}
+
+/* datetime-local input dark mode */
+.dark input[type="datetime-local"] {
+  background-color: var(--qm-surface) !important;
+  color: var(--qm-text) !important;
+  border-color: var(--qm-border) !important;
+  color-scheme: dark;
+}
+
+/* Mobile: full-width modals on small screens */
+@media (max-width: 480px) {
+  .max-w-md { max-width: calc(100vw - 2rem) !important; }
+  .max-w-sm { max-width: calc(100vw - 2rem) !important; }
+}
+
+/* Transition for smooth switching */
+.dark *,
+.dark *::before,
+.dark *::after {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.1s ease;
+}
