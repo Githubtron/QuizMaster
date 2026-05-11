@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import api from '@/services/api'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -20,6 +21,8 @@ export default function Login() {
   const navigate = useNavigate()
   const [showPw, setShowPw] = useState(false)
   const [apiError, setApiError] = useState('')
+  const [seedMsg, setSeedMsg] = useState('')
+  const [isSeeding, setIsSeeding] = useState(false)
 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -32,12 +35,27 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     setApiError('')
+    setSeedMsg('')
     try {
       const user = await login(data.email, data.password)
       const dest = user.role === 'ADMIN' ? '/admin/dashboard' : user.role === 'PROFESSOR' ? '/professor/dashboard' : '/student/dashboard'
       navigate(dest, { replace: true })
     } catch (err) {
       setApiError(err.response?.data?.detail || 'Login failed. Please try again.')
+    }
+  }
+
+  const handleSeed = async () => {
+    setIsSeeding(true)
+    setApiError('')
+    setSeedMsg('')
+    try {
+      const res = await api.get('/auth/seed-demo')
+      setSeedMsg(res.data.detail || 'Demo users initialized!')
+    } catch (err) {
+      setApiError('Failed to initialize demo users.')
+    } finally {
+      setIsSeeding(false)
     }
   }
 
@@ -149,6 +167,19 @@ export default function Login() {
               <span className="font-semibold text-amber-900 group-hover:text-amber-700">Student</span>
               <span className="text-amber-700/80 font-mono text-xs">student@demo.com</span>
             </button>
+          </div>
+          <div className="mt-3 text-center">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              loading={isSeeding}
+              onClick={handleSeed}
+              className="text-xs bg-white text-amber-800 border-amber-300 hover:bg-amber-100"
+            >
+              Initialize Demo Users in DB
+            </Button>
+            {seedMsg && <p className="text-xs text-green-600 mt-2 font-medium">{seedMsg}</p>}
           </div>
         </motion.div>
       </motion.div>
