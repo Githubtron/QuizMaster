@@ -21,9 +21,14 @@ export default function Login() {
   const [showPw, setShowPw] = useState(false)
   const [apiError, setApiError] = useState('')
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
   })
+
+  const fillDemo = (email, password) => {
+    setValue('email', email)
+    setValue('password', password)
+  }
 
   const onSubmit = async (data) => {
     setApiError('')
@@ -118,11 +123,32 @@ export default function Login() {
           transition={{ delay: 0.3 }}
           className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm"
         >
-          <p className="font-medium text-amber-800 mb-2">Demo credentials</p>
-          <div className="space-y-1 text-amber-700 font-mono text-xs">
-            <p>Admin:     admin@demo.com / admin1234</p>
-            <p>Professor: professor@demo.com / prof1234</p>
-            <p>Student:   student@demo.com / student1234</p>
+          <p className="font-medium text-amber-800 mb-3">Demo access (Click to fill)</p>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => fillDemo('admin@demo.com', 'admin1234')}
+              className="flex items-center justify-between px-3 py-2 bg-white/60 hover:bg-white rounded-lg border border-amber-200/60 transition-colors text-left group"
+            >
+              <span className="font-semibold text-amber-900 group-hover:text-amber-700">Admin</span>
+              <span className="text-amber-700/80 font-mono text-xs">admin@demo.com</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillDemo('professor@demo.com', 'prof1234')}
+              className="flex items-center justify-between px-3 py-2 bg-white/60 hover:bg-white rounded-lg border border-amber-200/60 transition-colors text-left group"
+            >
+              <span className="font-semibold text-amber-900 group-hover:text-amber-700">Professor</span>
+              <span className="text-amber-700/80 font-mono text-xs">professor@demo.com</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillDemo('student@demo.com', 'student1234')}
+              className="flex items-center justify-between px-3 py-2 bg-white/60 hover:bg-white rounded-lg border border-amber-200/60 transition-colors text-left group"
+            >
+              <span className="font-semibold text-amber-900 group-hover:text-amber-700">Student</span>
+              <span className="text-amber-700/80 font-mono text-xs">student@demo.com</span>
+            </button>
           </div>
         </motion.div>
       </motion.div>
