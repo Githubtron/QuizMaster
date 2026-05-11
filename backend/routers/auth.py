@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from core.security import create_access_token, hash_password, verify_password
 from models.user import User
+from models.category import Category
 from schemas.user import TokenResponse, UserCreate, UserLogin, UserOut
 
 router = APIRouter()
@@ -52,14 +53,41 @@ async def seed_demo_users(db: AsyncSession = Depends(get_db)):
         {"email": "professor@demo.com", "password_hash": hash_password("prof1234"), "full_name": "Demo Professor", "role": "PROFESSOR"},
         {"email": "student@demo.com", "password_hash": hash_password("student1234"), "full_name": "Demo Student", "role": "STUDENT"},
     ]
-    created = []
+    created_users = []
+    
+    # 1. Seed Users
     for u in users:
         existing = await db.execute(select(User).where(User.email == u["email"]))
         if not existing.scalar_one_or_none():
             user = User(**u)
             db.add(user)
-            created.append(u["email"])
-    if created:
+            created_users.append(u["email"])
+    
+    await db.flush() # flush so users get IDs
+    
+    # 2. Get the professor ID to assign categories
+    prof_res = await db.execute(select(User).where(User.email == "professor@demo.com"))
+    prof = prof_res.scalar_one_or_none()
+    
+    created_categories = []
+    if prof:
+        cats = [
+            {"name": "Computer Science", "description": "Programming, Algorithms, Data Structures"},
+            {"name": "Mathematics", "description": "Calculus, Algebra, Discrete Math"},
+            {"name": "General Knowledge", "description": "Trivia, History, Geography"}
+        ]
+        for c in cats:
+            existing_cat = await db.execute(select(Category).where(Category.name == c["name"]))
+            if not existing_cat.scalar_one_or_none():
+                cat = Category(name=c["name"], description=c["description"], created_by=prof.id)
+                db.add(cat)
+                created_categories.append(c["name"])
+
+    if created_users or created_categories:
         await db.commit()
-        return {"detail": f"Seeded users: {', '.join(created)}"}
-    return {"detail": "Demo users already exist"}
+        return {
+            "detail": "Demo initialized!", 
+            "users": created_users, 
+            "categories": created_categories
+        }
+    return {"detail": "Demo users and categories already exist"}
