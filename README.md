@@ -43,5 +43,3 @@ fair, automated, and insightful online examinations.
 | PDF Generation | ReportLab, Matplotlib |
 | Deployment | Render |
 
-## Subject
-24CSE48 — Online Quiz and Examination Management System
